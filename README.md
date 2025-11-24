@@ -27,7 +27,6 @@ eastafrica-climate-hub/
 ├── frontend/
 │   ├── pages/
 │   │   ├── index.html
-│   │   ├── dashboard.html
 │   │   ├── climate-data-repository.html
 │   │   ├── policy-comparison-tracking.html
 │   │   └── climate-map.html
@@ -43,7 +42,7 @@ eastafrica-climate-hub/
 │   └── seed-data.js
 ├── data/
 │   └── csv/
-│       ├── climate-data.csv
+│       ├── repository-data.csv
 │       ├── policy-analysis.csv
 │       
 ├── package.json

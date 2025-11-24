@@ -11,7 +11,6 @@ A comprehensive web platform providing reliable climate insights across East Afr
 - **Regional Comparison Tools**: Analyze policy approaches between member states
 - **Interactive Regional Map**: Visual indicators of climate impacts and policy responses
 - **Climate Data Repository**: Comprehensive database of policies, reports, and research papers
-- **Policy Search & Comparison**: Find and compare policies across EAC countries
 
 ## Technology Stack
 

@@ -44,37 +44,63 @@ eastafrica-climate-hub/
 ├── data/
 │   └── csv/
 │       ├── climate-data.csv
-│       ├── policies.csv
-│       ├── reports.csv
-│       └── research-papers.csv
+│       ├── policy-analysis.csv
+│       
 ├── package.json
 └── README.md
 ```
 
 ## Setup Instructions
 
+### Prerequisites
+- **Node.js** (v14 or higher)
+- **PostgreSQL** (v12 or higher) - [Download here](https://www.postgresql.org/download/)
+
+> **Note:** Make sure PostgreSQL is installed and running on your machine before proceeding.
+
+### Installation
+
 1. **Install Dependencies**
    ```bash
    npm install
    ```
 
-2. **Setup Database**
+2. **Configure Environment**
+   
+   Create a `.env` file in the root directory with the following configuration:
+   
+   ```env
+   DB_USER=postgres
+   DB_HOST=localhost
+   DB_NAME=eaf_climate_hub
+   DB_PASSWORD=your_password_here
+   DB_PORT=5432
+   PORT=3000
+   ```
+   
+   Replace `your_password_here` with the password you set during PostgreSQL installation.
+
+3. **Setup Database Schema**
    ```bash
    npm run setup-db
    ```
+   This will automatically create the database and all required tables.
 
-3. **Seed Data**
+4. **Seed Data**
    ```bash
    npm run seed
    ```
 
-4. **Start Server**
+5. **Start Server**
    ```bash
    npm start
    ```
    
-   For development with auto-restart:
-   ```bash
-   npm run dev
-   ```
+
+6. **Access Application**
+   - Frontend: `http://localhost:3000`
+   - API: `http://localhost:3000/api`
+   - Health Check: `http://localhost:3000/api/health`
+
+For detailed backend setup and API documentation, see [BACKEND_SETUP.md](BACKEND_SETUP.md)
 

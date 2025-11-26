@@ -43,7 +43,7 @@ app.get('/api', (req, res) => {
         }
         body {
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: #fcfbe4;
           min-height: 100vh;
           padding: 40px 20px;
         }
@@ -56,7 +56,7 @@ app.get('/api', (req, res) => {
           overflow: hidden;
         }
         .header {
-          background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+          background: rgb(253, 189, 70);
           color: white;
           padding: 40px;
           text-align: center;
@@ -87,12 +87,12 @@ app.get('/api', (req, res) => {
           color: #2c3e50;
           margin-bottom: 20px;
           font-size: 1.8em;
-          border-bottom: 3px solid #667eea;
+          border-bottom: 3px solid rgb(253, 189, 70);
           padding-bottom: 10px;
         }
         .endpoint {
           background: #f8f9fa;
-          border-left: 4px solid #667eea;
+          border-left: 4px solid rgb(253, 189, 70);
           padding: 20px;
           margin-bottom: 15px;
           border-radius: 8px;
@@ -114,7 +114,7 @@ app.get('/api', (req, res) => {
         }
         .path {
           font-family: 'Courier New', monospace;
-          color: #667eea;
+          color: rgb(253, 189, 70);
           font-weight: bold;
           font-size: 1.1em;
         }

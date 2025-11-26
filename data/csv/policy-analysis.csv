@@ -1,5 +1,9 @@
-country,governance_score,mitigation_score,adaptation_score,overall_index,source
-Kenya,76.7,64.5,73.3,70.8,"NDC IMPLEMENTATION INDEX 2024"
-Tanzania,68.4,58.2,71.8,65.5,"NDC IMPLEMENTATION INDEX 2024"
-Uganda,72.1,61.3,69.5,67.3,"NDC IMPLEMENTATION INDEX 2024"
-Rwanda,81.2,70.5,78.9,76.2,"NDC IMPLEMENTATION INDEX 2024"
+country,governance_score, mitigation_score,adaptation_score,overall_index,source
+Kenya,76.7,64.5,73.3,70.8,NDC IMPLEMENTATION INDEX 2024
+Uganda,66.7,51,46.7,53.5,NDC IMPLEMENTATION INDEX 2024
+Tanzania,66.7,51,66.7,59,NDC IMPLEMENTATION INDEX 2024
+Rwanda,45,61.7,43.6,49.8,"ND-GAIN 2024, ACCPPI Epule et al. 2021"
+Democratic Republic of Congo (DRC),26.5,71.7,32.8,41.9,"ND-GAIN 2024, ACCPPI Epule et al. 2021 (Regional Avg)"
+Burundi,31.5,61.7,32.9,41.1,"ND-GAIN 2024, ACCPPI Epule et al. 2021 (Regional Avg)"
+South Sudan,31.5,61.7,30.2,41.9,"ND-GAIN 2024, ACCPPI Epule et al. 2021 (Regional Avg)"
+Somalia,31.5,61.7,35.7,40.5,"ND-GAIN 2024, ACCPPI Epule et al. 2021 (Regional Avg)"

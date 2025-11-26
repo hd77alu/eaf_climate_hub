@@ -9,6 +9,65 @@
   <div class="content-section">
     <h2>CLIMATE DATA REPOSITORY</h2>
     <p>Browse and explore comprehensive collection of climate policies, research reports, and scientific papers from across the East African Community (EAC) member states.</p>
+    
+    <!-- Search and Filters -->
+    <div class="repository-controls">
+      <div class="search-box">
+        <input 
+          type="text" 
+          id="repo-search" 
+          placeholder="Search documents by title, description, or source..."
+          class="search-input"
+        />
+      </div>
+      
+      <div class="filters-row">
+        <div class="filter-group">
+          <label for="filter-type">Type:</label>
+          <select id="filter-type" class="filter-select">
+            <option value="">All Types</option>
+            <option value="policy">Policy</option>
+            <option value="report">Report</option>
+            <option value="research">Research</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label for="filter-country">Country:</label>
+          <select id="filter-country" class="filter-select">
+            <option value="">All Countries</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label for="filter-sector">Sector:</label>
+          <select id="filter-sector" class="filter-select">
+            <option value="">All Sectors</option>
+          </select>
+        </div>
+        
+        <button id="clear-filters" class="clear-btn">Clear Filters</button>
+      </div>
+    </div>
+    
+    <!-- Results Count -->
+    <div id="results-count" class="results-count"></div>
+    
+    <!-- Loading State -->
+    <div id="repo-loading" class="loading">Loading documents...</div>
+    
+    <!-- Documents Grid -->
+    <div id="documents-grid" class="documents-grid"></div>
+    
+    <!-- Show More Button -->
+    <div class="show-more-container">
+      <button id="show-more-btn" class="show-more-btn">
+        Show More Documents
+      </button>
+    </div>
+    
+    <!-- Error Message -->
+    <div id="repo-error" class="error-message"></div>
   </div>
 </body>
 </html>

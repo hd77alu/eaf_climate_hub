@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Policy Analysis & Comparison</title>
+</head>
+<body>
+  <div class="content-section">
+    <h2>POLICY ANALYSIS & COMPARISON</h2>
+    <p>Compare climate policies, analyze governance scores, mitigation strategies, adaptation measures and track their effectiveness across East African Community (EAC) countries.</p>
+    
+    <!-- Country Filter -->
+    <div class="policy-filter">
+      <h3>Select Countries to Compare</h3>
+      <div id="country-filter-grid" class="country-filter-grid"></div>
+      <div class="filter-actions">
+        <button id="select-all-countries" class="select-all-btn">Select All</button>
+        <button id="clear-all-countries" class="clear-all-btn">Clear All</button>
+      </div>
+    </div>
+    
+    <!-- Loading State -->
+    <div id="policy-loading" class="loading">Loading policy analysis data...</div>
+    
+    <!-- Error Message -->
+    <div id="policy-error" class="error-message"></div>
+    
+    <!-- Policy Analysis Grid -->
+    <div id="policy-grid" class="policy-analysis-grid"></div>
+    
+    <!-- NDC Classification Legend -->
+    <div class="ndc-legend">
+      <h3>NDC Implementation Index Classification</h3>
+      <div class="legend-items">
+        <div class="legend-item">
+          <span class="legend-badge poor">Poor</span>
+          <span>Below 40</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-badge average">Average</span>
+          <span>40 - 54</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-badge good">Good</span>
+          <span>55 - 69</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-badge satisfactory">Satisfactory</span>
+          <span>70 - 79</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-badge outstanding">Outstanding</span>
+          <span>80+</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Data Sources Credits -->
+    <div class="data-sources">
+      <h3>Data Sources</h3>
+      <p>
+        <strong>NDC Implementation Index:</strong> Data from the African Technology Policy Studies Network (ATPS) NDC Implementation Index, which tracks Nationally Determined Contributions implementation progress across African countries.
+        <a href="https://atps-ndcindex.africa/" target="_blank" rel="noopener noreferrer">Visit NDC Index Website</a>
+      </p>
+      <p>
+        <strong>African Climate Change Policy Performance Index (ACCPPI):</strong> Based on research by Epule et al. (2021), which evaluates climate change policy performance across the African nations.
+        <a href="https://www.sciencedirect.com/science/article/pii/S2665972721000647?via%3Dihub" target="_blank" rel="noopener noreferrer">Read the Research Paper</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>

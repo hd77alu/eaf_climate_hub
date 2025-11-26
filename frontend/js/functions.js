@@ -8,8 +8,28 @@ document.addEventListener('DOMContentLoaded', () => {
     'dashboard': '/pages/index.html',
     'climate': '/pages/climate-data-repository.html',
     'map': '/pages/climate-map.html',
-    'policies': '/pages/policy-comparison-tracking.html'
+    'policy-analysis': '/pages/policy-analysis.html'
   };
+
+  // Scroll to Top Button
+  const scrollToTopBtn = document.getElementById('scroll-to-top');
+  
+  // Show/hide scroll to top button based on scroll position
+  window.addEventListener('scroll', () => {
+    if (window.pageYOffset > 300) {
+      scrollToTopBtn.classList.add('show');
+    } else {
+      scrollToTopBtn.classList.remove('show');
+    }
+  });
+  
+  // Scroll to top when button is clicked
+  scrollToTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
 
   // Load content for a specific tab
   async function loadTabContent(tabId) {
@@ -52,6 +72,10 @@ document.addEventListener('DOMContentLoaded', () => {
       initializeMap();
     } else if (tabId === 'dashboard' && typeof initializeCharts === 'function') {
       initializeCharts();
+    } else if (tabId === 'climate') {
+      initializeRepository();
+    } else if (tabId === 'policy-analysis') {
+      loadPolicyAnalysis();
     }
   }
 
@@ -629,6 +653,449 @@ async function loadClimateData() {
     errorMessage.classList.add('show');
     console.error('Climate data error:', error);
   }
+}
+
+// Climate Data Repository Functionality
+let allDocuments = [];
+let filteredDocuments = [];
+let displayedCount = 0;
+const DOCS_PER_PAGE = 15;
+
+async function initializeRepository() {
+  try {
+    // Load filter options
+    await loadFilterOptions();
+    
+    // Load all documents
+    await loadRepositoryDocuments();
+    
+    // Set up event listeners
+    setupRepositoryListeners();
+  } catch (error) {
+    console.error('Error initializing repository:', error);
+  }
+}
+
+async function loadFilterOptions() {
+  try {
+    // Load countries
+    const countriesRes = await fetch('http://localhost:3000/api/repository/countries');
+    const countries = await countriesRes.json();
+    const countrySelect = document.getElementById('filter-country');
+    countries.forEach(country => {
+      const option = document.createElement('option');
+      option.value = country;
+      option.textContent = country;
+      countrySelect.appendChild(option);
+    });
+    
+    // Load sectors
+    const sectorsRes = await fetch('http://localhost:3000/api/repository/sectors');
+    const sectors = await sectorsRes.json();
+    const sectorSelect = document.getElementById('filter-sector');
+    sectors.forEach(sector => {
+      const option = document.createElement('option');
+      option.value = sector;
+      option.textContent = sector;
+      sectorSelect.appendChild(option);
+    });
+  } catch (error) {
+    console.error('Error loading filter options:', error);
+  }
+}
+
+async function loadRepositoryDocuments() {
+  const loading = document.getElementById('repo-loading');
+  const errorDiv = document.getElementById('repo-error');
+  
+  try {
+    loading.style.display = 'block';
+    errorDiv.textContent = '';
+    
+    const response = await fetch('http://localhost:3000/api/repository/items');
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch documents');
+    }
+    
+    allDocuments = await response.json();
+    filteredDocuments = [...allDocuments];
+    
+    loading.style.display = 'none';
+    
+    displayedCount = 0;
+    displayDocuments();
+    
+  } catch (error) {
+    loading.style.display = 'none';
+    errorDiv.textContent = `Error loading documents: ${error.message}`;
+    console.error('Repository error:', error);
+  }
+}
+
+function setupRepositoryListeners() {
+  const searchInput = document.getElementById('repo-search');
+  const typeFilter = document.getElementById('filter-type');
+  const countryFilter = document.getElementById('filter-country');
+  const sectorFilter = document.getElementById('filter-sector');
+  const clearBtn = document.getElementById('clear-filters');
+  const showMoreBtn = document.getElementById('show-more-btn');
+  
+  // Search with debounce
+  let searchTimeout;
+  searchInput.addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      applyFilters();
+    }, 300);
+  });
+  
+  // Filter changes
+  typeFilter.addEventListener('change', applyFilters);
+  countryFilter.addEventListener('change', applyFilters);
+  sectorFilter.addEventListener('change', applyFilters);
+  
+  // Clear filters
+  clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    typeFilter.value = '';
+    countryFilter.value = '';
+    sectorFilter.value = '';
+    applyFilters();
+  });
+  
+  // Show more
+  showMoreBtn.addEventListener('click', () => {
+    displayDocuments(true);
+  });
+}
+
+function applyFilters() {
+  const searchTerm = document.getElementById('repo-search').value.toLowerCase();
+  const typeFilter = document.getElementById('filter-type').value;
+  const countryFilter = document.getElementById('filter-country').value;
+  const sectorFilter = document.getElementById('filter-sector').value;
+  
+  filteredDocuments = allDocuments.filter(doc => {
+    // Search filter
+    const matchesSearch = !searchTerm || 
+      doc.title.toLowerCase().includes(searchTerm) ||
+      (doc.description && doc.description.toLowerCase().includes(searchTerm)) ||
+      (doc.source && doc.source.toLowerCase().includes(searchTerm));
+    
+    // Type filter
+    const matchesType = !typeFilter || doc.type === typeFilter;
+    
+    // Country filter
+    const matchesCountry = !countryFilter || doc.country === countryFilter;
+    
+    // Sector filter
+    const matchesSector = !sectorFilter || doc.sector === sectorFilter;
+    
+    return matchesSearch && matchesType && matchesCountry && matchesSector;
+  });
+  
+  displayedCount = 0;
+  displayDocuments();
+}
+
+function displayDocuments(append = false) {
+  const grid = document.getElementById('documents-grid');
+  const resultsCount = document.getElementById('results-count');
+  const showMoreBtn = document.getElementById('show-more-btn');
+  
+  if (!append) {
+    grid.innerHTML = '';
+    displayedCount = 0;
+  }
+  
+  const docsToShow = filteredDocuments.slice(displayedCount, displayedCount + DOCS_PER_PAGE);
+  displayedCount += docsToShow.length;
+  
+  // Update results count
+  resultsCount.textContent = `Showing ${displayedCount} of ${filteredDocuments.length} documents`;
+  
+  // Show/hide "Show More" button
+  if (displayedCount < filteredDocuments.length) {
+    showMoreBtn.style.display = 'block';
+  } else {
+    showMoreBtn.style.display = 'none';
+  }
+  
+  if (filteredDocuments.length === 0) {
+    grid.innerHTML = '<div class="no-results">No documents found matching your criteria.</div>';
+    resultsCount.textContent = '';
+    return;
+  }
+  
+  docsToShow.forEach(doc => {
+    const card = createDocumentCard(doc);
+    grid.appendChild(card);
+  });
+}
+
+function createDocumentCard(doc) {
+  const card = document.createElement('div');
+  card.className = 'document-card';
+  
+  const typeClass = doc.type || 'document';
+  const typeBadge = `<span class="type-badge ${typeClass}">${doc.type || 'Document'}</span>`;
+  
+  card.innerHTML = `
+    <div class="document-header">
+      ${typeBadge}
+      <span class="document-year">${doc.year || 'N/A'}</span>
+    </div>
+    <h3 class="document-title">${doc.title}</h3>
+    <div class="document-meta">
+      <div class="meta-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        <span>${doc.country}</span>
+      </div>
+      ${doc.sector ? `
+      <div class="meta-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+        </svg>
+        <span>${doc.sector}</span>
+      </div>
+      ` : ''}
+    </div>
+    ${doc.description ? `
+    <div class="description-container">
+      <div class="description-wrapper">
+        <p class="document-description">${doc.description}</p>
+      </div>
+      <button class="expand-description" aria-label="Expand description">
+        <span class="arrow">⌄</span>
+      </button>
+    </div>
+    ` : ''}
+    <div class="document-footer">
+      <div class="document-source">${doc.source || 'Source not specified'}</div>
+      ${doc.link ? `
+      <a href="${doc.link}" target="_blank" rel="noopener noreferrer" class="download-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        View/Download
+      </a>
+      ` : '<span class="no-link">No link available</span>'}
+    </div>
+  `;
+  
+  // Add click handler for expand/collapse
+  if (doc.description) {
+    const expandBtn = card.querySelector('.expand-description');
+    const descriptionWrapper = card.querySelector('.description-wrapper');
+    
+    expandBtn.addEventListener('click', () => {
+      descriptionWrapper.classList.toggle('expanded');
+      expandBtn.classList.toggle('expanded');
+    });
+  }
+  
+  return card;
+}
+
+// Policy Analysis Functionality
+let allPolicyData = [];
+let selectedCountries = new Set();
+
+async function loadPolicyAnalysis() {
+  const loading = document.getElementById('policy-loading');
+  const errorDiv = document.getElementById('policy-error');
+  
+  try {
+    loading.style.display = 'block';
+    errorDiv.textContent = '';
+    
+    const response = await fetch('http://localhost:3000/api/policy-analysis');
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch policy analysis data');
+    }
+    
+    allPolicyData = await response.json();
+    
+    loading.style.display = 'none';
+    
+    // Sort by overall_index descending
+    allPolicyData.sort((a, b) => b.overall_index - a.overall_index);
+    
+    // Initialize country filter
+    initializeCountryFilter();
+    
+    // Display all countries initially
+    selectedCountries = new Set(allPolicyData.map(p => p.country));
+    updatePolicyDisplay();
+    
+  } catch (error) {
+    loading.style.display = 'none';
+    errorDiv.textContent = `Error loading policy analysis: ${error.message}`;
+    errorDiv.classList.add('show');
+    console.error('Policy analysis error:', error);
+  }
+}
+
+function initializeCountryFilter() {
+  const filterGrid = document.getElementById('country-filter-grid');
+  const selectAllBtn = document.getElementById('select-all-countries');
+  const clearAllBtn = document.getElementById('clear-all-countries');
+  
+  filterGrid.innerHTML = '';
+  
+  allPolicyData.forEach(policy => {
+    const checkboxDiv = document.createElement('div');
+    checkboxDiv.className = 'country-checkbox';
+    
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = `country-${policy.country.replace(/\s+/g, '-')}`;
+    checkbox.value = policy.country;
+    checkbox.checked = true;
+    
+    const label = document.createElement('label');
+    label.htmlFor = checkbox.id;
+    label.textContent = policy.country;
+    
+    checkbox.addEventListener('change', (e) => {
+      if (e.target.checked) {
+        selectedCountries.add(policy.country);
+      } else {
+        selectedCountries.delete(policy.country);
+      }
+      updatePolicyDisplay();
+    });
+    
+    checkboxDiv.appendChild(checkbox);
+    checkboxDiv.appendChild(label);
+    filterGrid.appendChild(checkboxDiv);
+  });
+  
+  // Select All button
+  selectAllBtn.addEventListener('click', () => {
+    document.querySelectorAll('.country-checkbox input[type="checkbox"]').forEach(cb => {
+      cb.checked = true;
+      selectedCountries.add(cb.value);
+    });
+    updatePolicyDisplay();
+  });
+  
+  // Clear All button
+  clearAllBtn.addEventListener('click', () => {
+    document.querySelectorAll('.country-checkbox input[type="checkbox"]').forEach(cb => {
+      cb.checked = false;
+    });
+    selectedCountries.clear();
+    updatePolicyDisplay();
+  });
+}
+
+function updatePolicyDisplay() {
+  const grid = document.getElementById('policy-grid');
+  grid.innerHTML = '';
+  
+  const filteredData = allPolicyData.filter(policy => selectedCountries.has(policy.country));
+  
+  if (filteredData.length === 0) {
+    grid.innerHTML = '<div class="no-results">No countries selected. Please select at least one country to view policy analysis.</div>';
+    return;
+  }
+  
+  filteredData.forEach(policy => {
+    const card = createPolicyCard(policy);
+    grid.appendChild(card);
+  });
+}
+
+function createPolicyCard(policy) {
+  const card = document.createElement('div');
+  card.className = 'policy-card';
+  
+  const classification = getClassification(policy.overall_index);
+  
+  card.innerHTML = `
+    <div class="policy-card-header">
+      <h3 class="policy-country">${policy.country}</h3>
+      <span class="ndc-badge ${classification.class}">${classification.label}</span>
+    </div>
+    
+    <div class="policy-score-main">
+      <div class="overall-score ${classification.class}">
+        <span class="score-value">${policy.overall_index}</span>
+        <span class="score-label">Overall Index</span>
+      </div>
+    </div>
+    
+    <div class="policy-scores">
+      <div class="score-item">
+        <div class="score-bar-container">
+          <div class="score-bar ${getScoreColor(policy.governance_score)}" style="width: ${policy.governance_score}%"></div>
+        </div>
+        <div class="score-info">
+          <span class="score-name">Governance</span>
+          <span class="score-number">${policy.governance_score}</span>
+        </div>
+      </div>
+      
+      <div class="score-item">
+        <div class="score-bar-container">
+          <div class="score-bar ${getScoreColor(policy.mitigation_score)}" style="width: ${policy.mitigation_score}%"></div>
+        </div>
+        <div class="score-info">
+          <span class="score-name">Mitigation</span>
+          <span class="score-number">${policy.mitigation_score}</span>
+        </div>
+      </div>
+      
+      <div class="score-item">
+        <div class="score-bar-container">
+          <div class="score-bar ${getScoreColor(policy.adaptation_score)}" style="width: ${policy.adaptation_score}%"></div>
+        </div>
+        <div class="score-info">
+          <span class="score-name">Adaptation</span>
+          <span class="score-number">${policy.adaptation_score}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="policy-source">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+      </svg>
+      ${policy.source}
+    </div>
+  `;
+  
+  return card;
+}
+
+function getClassification(score) {
+  if (score >= 80) {
+    return { class: 'outstanding', label: 'Outstanding' };
+  } else if (score >= 70) {
+    return { class: 'satisfactory', label: 'Satisfactory' };
+  } else if (score >= 55) {
+    return { class: 'good', label: 'Good' };
+  } else if (score >= 40) {
+    return { class: 'average', label: 'Average' };
+  } else {
+    return { class: 'poor', label: 'Poor' };
+  }
+}
+
+function getScoreColor(score) {
+  if (score >= 70) return 'high';
+  if (score >= 50) return 'medium';
+  return 'low';
 }
 
 

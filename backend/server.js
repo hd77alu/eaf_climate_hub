@@ -444,7 +444,7 @@ app.get('/api/repository/research', async (req, res) => {
 app.get('/api/repository/sectors', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT DISTINCT sector FROM repository_items WHERE sector IS NOT NULL ORDER BY sector'
+      'SELECT DISTINCT TRIM(sector) as sector FROM repository_items WHERE sector IS NOT NULL ORDER BY sector'
     );
     res.json(result.rows.map(row => row.sector));
   } catch (error) {
@@ -457,7 +457,7 @@ app.get('/api/repository/sectors', async (req, res) => {
 app.get('/api/repository/countries', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT DISTINCT country FROM repository_items WHERE country IS NOT NULL ORDER BY country'
+      'SELECT DISTINCT TRIM(country) as country FROM repository_items WHERE country IS NOT NULL ORDER BY country'
     );
     res.json(result.rows.map(row => row.country));
   } catch (error) {

@@ -552,8 +552,9 @@ async function loadClimateData() {
     { code: 'RWA', name: 'Rwanda' },
     { code: 'UGA', name: 'Uganda' },
     { code: 'SSD', name: 'South Sudan' },
-    { code: 'COD', name: 'Democratic Republic of Congo' },
-    { code: 'SOM', name: 'Somalia' }
+    { code: 'SOM', name: 'Somalia' },
+    { code: 'COD', name: 'Democratic Republic of Congo' }
+    
   ];
 
   // Climate indicators to fetch

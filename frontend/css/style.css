@@ -1064,7 +1064,7 @@ body {
 }
 
 .ndc-badge.good {
-  background: #e7f708;
+  background: #d5d3d3 ;
   color: white;
 }
 
@@ -1101,7 +1101,7 @@ body {
 }
 
 .overall-score.good {
-  background: linear-gradient(135deg, #e7f708 0%, #d4d700 100%);
+  background: linear-gradient(135deg, #edede8 0%, #b3b3b3 100%);
 }
 
 .overall-score.average {
@@ -1244,7 +1244,7 @@ body {
 }
 
 .legend-badge.good {
-  background: #e7f708;
+  background: #d5d3d3;
 }
 
 .legend-badge.average {

@@ -242,7 +242,7 @@ async function loadTemperatureData(countries) {
           'Rwanda': 'url(https://www.ugandarwanda-safaris.com/wp-content/uploads/2025/11/Best-Things-to-Do-in-Rwanda-Safari.gif)',
           'Uganda': 'url(https://images7.alphacoders.com/360/360379.jpeg)',
           'South Sudan': 'url(https://www.wildimages-phototours.com/wp-content/uploads/2021/03/Toposa-dancers-7-South-Sudan-Inger-Vandyke.jpg)',
-          'Democratic Republic of Congo': 'url(https://wallpapercave.com/wp/wp2295657.jpg)',
+          'Democratic Republic of Congo': 'url(https://s27142.pcdn.co/wp-content/uploads/2018/04/Okapi-Epulu-230-e1524266061252.jpg)',
           'Somalia': 'url(https://th.bing.com/th/id/R.b6a3fe47b12fd61a714219be5f2e3902?rik=UFA9a4oqYeKpCw&pid=ImgRaw&r=0)'
         };
         

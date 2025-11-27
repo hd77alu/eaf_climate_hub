@@ -95,6 +95,13 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Show the tab
       document.getElementById(targetTab).classList.add('active');
+      
+      // Fix Leaflet map rendering issue when tab becomes visible
+      if (targetTab === 'map' && typeof map !== 'undefined' && map) {
+        setTimeout(() => {
+          map.invalidateSize();
+        }, 100);
+      }
     });
   });
 

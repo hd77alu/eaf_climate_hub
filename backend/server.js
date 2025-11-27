@@ -20,6 +20,7 @@ const pool = new Pool({
 app.use(cors());
 app.use(express.json());
 app.use(express.static('frontend'));
+app.use('/data', express.static('data'));
 
 // Root route - serve the main page
 app.get('/', (req, res) => {

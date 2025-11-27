@@ -1443,6 +1443,438 @@ body {
   }
 }
 
+/* Climate Map Styles */
+.map-container {
+  width: 100%;
+  height: 600px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin: 2rem 0;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .map-container {
+    height: 500px;
+  }
+}
+
+@media (max-width: 480px) {
+  .map-container {
+    height: 400px;
+  }
+}
+
+/* Map Legend */
+.map-legend {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: white;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 180px;
+}
+
+.map-legend h4 {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.map-legend .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  color: #4b5563;
+}
+
+.map-legend .legend-item:last-child {
+  margin-bottom: 0;
+}
+
+.map-legend .legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 0.25rem;
+  flex-shrink: 0;
+}
+
+.map-legend .legend-color.outstanding {
+  background: #10b981;
+}
+
+.map-legend .legend-color.satisfactory {
+  background: #3b82f6;
+}
+
+.map-legend .legend-color.good {
+  background: #d5d3d3;
+}
+
+.map-legend .legend-color.average {
+  background: #f59e0b;
+}
+
+.map-legend .legend-color.poor {
+  background: #ef4444;
+}
+
+/* Country-specific legend colors */
+.map-legend .legend-color.country-kenya {
+  background: #FF6B6B;
+}
+
+.map-legend .legend-color.country-tanzania {
+  background: #4ECDC4;
+}
+
+.map-legend .legend-color.country-uganda {
+  background: #FFD93D;
+}
+
+.map-legend .legend-color.country-rwanda {
+  background: #0c53f8ff;
+}
+
+.map-legend .legend-color.country-burundi {
+  background: #dd9d14ff;
+}
+
+.map-legend .legend-color.country-south-sudan {
+  background: #AA96DA;
+}
+
+.map-legend .legend-color.country-drc {
+  background: #6C5CE7;
+}
+
+.map-legend .legend-color.country-somalia {
+  background: #FD79A8;
+}
+
+@media (max-width: 768px) {
+  .map-legend {
+    top: auto;
+    bottom: 10px;
+    right: 10px;
+    min-width: 150px;
+    padding: 0.75rem;
+  }
+  
+  .map-legend h4 {
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .map-legend .legend-item {
+    font-size: 0.7rem;
+    margin-bottom: 0.375rem;
+  }
+  
+  .map-legend .legend-color {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Map Info Panel */
+.map-info-panel {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  z-index: 1001;
+  width: 350px;
+  max-height: 580px;
+  overflow-y: auto;
+  transform: translateX(-400px);
+  transition: transform 0.3s ease;
+  pointer-events: auto;
+}
+
+.map-info-panel.active {
+  transform: translateX(0);
+}
+
+.info-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-bottom: 2px solid #f3f4f6;
+  background: linear-gradient(135deg, rgb(253, 189, 70) 0%, rgb(234, 170, 50) 100%);
+  border-radius: 0.75rem 0.75rem 0 0;
+}
+
+.info-panel-header h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.close-panel-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  line-height: 1;
+  position: relative;
+  z-index: 1002;
+  pointer-events: auto;
+  flex-shrink: 0;
+}
+
+.close-panel-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.info-panel-content {
+  padding: 1.25rem;
+}
+
+.info-instruction {
+  color: #6b7280;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.info-overall-score {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.info-score-badge {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.25rem 2rem;
+  border-radius: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.info-score-badge.outstanding {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.info-score-badge.satisfactory {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.info-score-badge.good {
+  background: linear-gradient(135deg, #edede8 0%, #b3b3b3 100%);
+}
+
+.info-score-badge.average {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.info-score-badge.poor {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.info-score-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: white;
+  line-height: 1;
+}
+
+.info-score-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 0.375rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-classification {
+  display: inline-block;
+  padding: 0.375rem 0.875rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+  text-transform: uppercase;
+}
+
+.info-classification.outstanding {
+  background: #10b981;
+}
+
+.info-classification.satisfactory {
+  background: #3b82f6;
+}
+
+.info-classification.good {
+  background: #d5d3d3;
+}
+
+.info-classification.average {
+  background: #f59e0b;
+}
+
+.info-classification.poor {
+  background: #ef4444;
+}
+
+.info-scores-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.info-score-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.info-score-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.info-score-name {
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.info-score-number {
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.info-score-bar {
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.info-score-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.info-score-fill.high {
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+}
+
+.info-score-fill.medium {
+  background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+}
+
+.info-score-fill.low {
+  background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+}
+
+.info-source {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.info-ranking {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #f9fafb;
+  border-radius: 0.5rem;
+  border-left: 3px solid rgb(253, 189, 70);
+}
+
+.info-ranking-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+}
+
+.info-ranking-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+@media (max-width: 768px) {
+  .map-info-panel {
+    width: 300px;
+    max-height: 480px;
+  }
+  
+  .info-score-badge {
+    padding: 1rem 1.5rem;
+  }
+  
+  .info-score-value {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .map-info-panel {
+    width: calc(100% - 20px);
+    left: 10px;
+    right: 10px;
+    max-height: 350px;
+    top: auto;
+    bottom: 10px;
+    transform: translateY(400px);
+  }
+  
+  .map-info-panel.active {
+    transform: translateY(0);
+  }
+  
+  .info-panel-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .info-panel-header h3 {
+    font-size: 1rem;
+  }
+  
+  .info-panel-content {
+    padding: 1rem;
+  }
+  
+  .info-score-badge {
+    padding: 0.875rem 1.25rem;
+  }
+  
+  .info-score-value {
+    font-size: 1.75rem;
+  }
+}
+
 /* Improve touch targets on mobile */
 @media (hover: none) and (pointer: coarse) {
   .tab-trigger {

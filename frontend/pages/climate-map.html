@@ -4,11 +4,71 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Climate Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
   <div class="content-section">
     <h2>INTERACTIVE CLIMATE MAP</h2>
-    <p>Visualize climate data and policy responses across the East African Community (EAC).</p>
+    <p>Visualize NDC Implementation Index and climate policy performance across the East African Community.</p>
+    
+    <!-- Loading Indicator -->
+    <div id="map-loading" class="loading">Loading map data...</div>
+    
+    <!-- Error Message -->
+    <div id="map-error" class="error-message"></div>
+    
+    <!-- Map Container with Legend and Info Panel inside -->
+    <div id="climate-map" class="map-container">
+      <!-- Map Legend -->
+      <div class="map-legend">
+        <h4>EAC Countries</h4>
+        <div class="legend-item">
+          <span class="legend-color country-kenya"></span>
+          <span>Kenya</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color country-tanzania"></span>
+          <span>Tanzania</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color country-uganda"></span>
+          <span>Uganda</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color country-rwanda"></span>
+          <span>Rwanda</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color country-burundi"></span>
+          <span>Burundi</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color country-south-sudan"></span>
+          <span>South Sudan</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color country-drc"></span>
+          <span>DR Congo</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color country-somalia"></span>
+          <span>Somalia</span>
+        </div>
+      </div>
+      
+      <!-- Info Panel -->
+      <div id="map-info-panel" class="map-info-panel">
+        <div class="info-panel-header">
+          <h3 id="info-country-name">Select a Country</h3>
+          <button id="close-info-panel" class="close-panel-btn">&times;</button>
+        </div>
+        <div id="info-panel-content" class="info-panel-content">
+          <p class="info-instruction">Click on any EAC country to view detailed climate policy analysis.</p>
+        </div>
+      </div>
+    </div>
   </div>
+  
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </body>
 </html>

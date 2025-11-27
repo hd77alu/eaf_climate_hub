@@ -1,49 +1,77 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-// First, connect to the default 'postgres' database to create our database
-const setupPool = new Pool({
-  user: process.env.DB_USER || 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  database: 'postgres', // Connect to default database first
-  password: process.env.DB_PASSWORD || 'postgres',
-  port: process.env.DB_PORT || 5432,
-});
+// Parse DATABASE_URL if available, otherwise use individual variables
+let dbConfig;
+if (process.env.DATABASE_URL) {
+  // For Render: use DATABASE_URL and connect directly to the database
+  dbConfig = {
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false
+    }
+  };
+} else {
+  // For local: connect to default postgres database first
+  dbConfig = {
+    user: process.env.DB_USER || 'postgres',
+    host: process.env.DB_HOST || 'localhost',
+    database: 'postgres',
+    password: process.env.DB_PASSWORD || 'postgres',
+    port: process.env.DB_PORT || 5432,
+  };
+}
+
+const setupPool = new Pool(dbConfig);
 
 async function setupDatabase() {
   let client;
   let pool;
   
   try {
-    // Step 1: Create the database if it doesn't exist
-    console.log('Checking if database exists...');
-    client = await setupPool.connect();
-    
-    const dbCheckResult = await client.query(
-      `SELECT 1 FROM pg_database WHERE datname = $1`,
-      [process.env.DB_NAME || 'eaf_climate_hub']
-    );
-
-    if (dbCheckResult.rows.length === 0) {
-      console.log('Creating database...');
-      await client.query(`CREATE DATABASE ${process.env.DB_NAME || 'eaf_climate_hub'}`);
-      console.log('Database created successfully');
+    // Skip database creation if using DATABASE_URL (Render already created it)
+    if (process.env.DATABASE_URL) {
+      console.log('Using existing Render database, skipping creation step...');
     } else {
-      console.log('Database already exists');
-    }
-    
-    client.release();
-    await setupPool.end();
+      // Step 1: Create the database if it doesn't exist (local development only)
+      console.log('Checking if database exists...');
+      client = await setupPool.connect();
+      
+      const dbCheckResult = await client.query(
+        `SELECT 1 FROM pg_database WHERE datname = $1`,
+        [process.env.DB_NAME || 'eaf_climate_hub']
+      );
 
-    // Step 2: Connect to the newly created database and create tables
+      if (dbCheckResult.rows.length === 0) {
+        console.log('Creating database...');
+        await client.query(`CREATE DATABASE ${process.env.DB_NAME || 'eaf_climate_hub'}`);
+        console.log('Database created successfully');
+      } else {
+        console.log('Database already exists');
+      }
+      
+      client.release();
+      await setupPool.end();
+    }
+
+    // Step 2: Connect to the database and create tables
     console.log('Setting up tables...');
-    pool = new Pool({
-      user: process.env.DB_USER || 'postgres',
-      host: process.env.DB_HOST || 'localhost',
-      database: process.env.DB_NAME || 'eaf_climate_hub',
-      password: process.env.DB_PASSWORD || 'postgres',
-      port: process.env.DB_PORT || 5432,
-    });
+    pool = new Pool(
+      process.env.DATABASE_URL
+        ? {
+            connectionString: process.env.DATABASE_URL,
+            ssl: {
+              rejectUnauthorized: false
+            }
+          }
+        : {
+            user: process.env.DB_USER || 'postgres',
+            host: process.env.DB_HOST || 'localhost',
+            database: process.env.DB_NAME || 'eaf_climate_hub',
+            password: process.env.DB_PASSWORD || 'postgres',
+            port: process.env.DB_PORT || 5432,
+          }
+    );
 
     client = await pool.connect();
 

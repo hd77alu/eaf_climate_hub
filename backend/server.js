@@ -8,13 +8,23 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Database connection
-const pool = new Pool({
-  user: process.env.DB_USER || 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  database: process.env.DB_NAME || 'eaf_climate_hub',
-  password: process.env.DB_PASSWORD || 'postgres',
-  port: process.env.DB_PORT || 5432,
-});
+// Use DATABASE_URL if available (Render), otherwise use individual variables (local)
+const pool = new Pool(
+  process.env.DATABASE_URL
+    ? {
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+          rejectUnauthorized: false
+        }
+      }
+    : {
+        user: process.env.DB_USER || 'postgres',
+        host: process.env.DB_HOST || 'localhost',
+        database: process.env.DB_NAME || 'eaf_climate_hub',
+        password: process.env.DB_PASSWORD || 'postgres',
+        port: process.env.DB_PORT || 5432,
+      }
+);
 
 // Middleware
 app.use(cors());

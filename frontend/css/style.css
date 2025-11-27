@@ -1849,7 +1849,6 @@ body {
     top: auto;
     bottom: 10px;
     transform: translateY(400px);
-    -webkit-overflow-scrolling: touch;
     overflow-y: auto;
     scroll-behavior: smooth;
   }

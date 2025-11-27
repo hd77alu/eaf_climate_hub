@@ -76,7 +76,13 @@ eaf_climate_hub/
 
 2. **Configure Environment**
    
-   Create a `.env` file in the root directory with the following configuration:
+   Create a `.env` file in the root directory:
+   
+   ```bash
+   touch .env
+   ```
+   
+   Then add the following configuration to the `.env` file:
    
    ```env
    DB_USER=postgres

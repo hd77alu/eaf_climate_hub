@@ -687,7 +687,7 @@ async function initializeRepository() {
 async function loadFilterOptions() {
   try {
     // Load countries
-    const countriesRes = await fetch('http://localhost:3000/api/repository/countries');
+    const countriesRes = await fetch('/api/repository/countries');
     const countries = await countriesRes.json();
     const countrySelect = document.getElementById('filter-country');
     countries.forEach(country => {
@@ -698,7 +698,7 @@ async function loadFilterOptions() {
     });
     
     // Load sectors
-    const sectorsRes = await fetch('http://localhost:3000/api/repository/sectors');
+    const sectorsRes = await fetch('/api/repository/sectors');
     const sectors = await sectorsRes.json();
     const sectorSelect = document.getElementById('filter-sector');
     sectors.forEach(sector => {
@@ -720,7 +720,7 @@ async function loadRepositoryDocuments() {
     loading.style.display = 'block';
     errorDiv.textContent = '';
     
-    const response = await fetch('http://localhost:3000/api/repository/items');
+    const response = await fetch('/api/repository/items');
     
     if (!response.ok) {
       throw new Error('Failed to fetch documents');
@@ -924,7 +924,7 @@ async function loadPolicyAnalysis() {
     loading.style.display = 'block';
     errorDiv.textContent = '';
     
-    const response = await fetch('http://localhost:3000/api/policy-analysis');
+    const response = await fetch('/api/policy-analysis');
     
     if (!response.ok) {
       throw new Error('Failed to fetch policy analysis data');

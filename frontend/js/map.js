@@ -62,7 +62,7 @@ async function initializeMap() {
     }).addTo(map);
     
     // Fetch policy analysis data
-    const policyResponse = await fetch('http://localhost:3000/api/policy-analysis');
+    const policyResponse = await fetch('/api/policy-analysis');
     policyData = await policyResponse.json();
     
     // List of individual country GeoJSON files

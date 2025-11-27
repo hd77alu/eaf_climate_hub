@@ -114,6 +114,9 @@ async function initializeMap() {
     // Initialize close button
     initializeCloseButton();
     
+    // Prevent map interaction when scrolling inside info panel
+    preventMapInterferenceOnPanel();
+    
     loading.style.display = 'none';
     
   } catch (error) {
@@ -353,3 +356,42 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// Prevent map interference when scrolling info panel
+function preventMapInterferenceOnPanel() {
+  const infoPanel = document.getElementById('map-info-panel');
+  
+  if (infoPanel) {
+    // Prevent touch/wheel events from propagating to the map
+    infoPanel.addEventListener('touchstart', (e) => {
+      e.stopPropagation();
+    }, { passive: true });
+    
+    infoPanel.addEventListener('touchmove', (e) => {
+      e.stopPropagation();
+    }, { passive: true });
+    
+    infoPanel.addEventListener('touchend', (e) => {
+      e.stopPropagation();
+    }, { passive: true });
+    
+    infoPanel.addEventListener('wheel', (e) => {
+      e.stopPropagation();
+    }, { passive: true });
+    
+    // Disable map dragging when touching the panel
+    infoPanel.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+      if (map) {
+        map.dragging.disable();
+      }
+    });
+    
+    infoPanel.addEventListener('mouseup', (e) => {
+      e.stopPropagation();
+      if (map) {
+        map.dragging.enable();
+      }
+    });
+  }
+}

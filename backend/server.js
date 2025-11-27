@@ -220,12 +220,6 @@ app.get('/api', (req, res) => {
             
             <div class="endpoint">
               <span class="method">GET</span>
-              <span class="path">/api/policy-analysis/compare</span>
-              <div class="description">Compare multiple countries (use ?countries=Kenya,Tanzania,Uganda)</div>
-            </div>
-            
-            <div class="endpoint">
-              <span class="method">GET</span>
               <span class="path">/api/policy-analysis/ranking/:metric</span>
               <div class="description">Get country rankings by metric (governance_score, mitigation_score, adaptation_score, overall_index)</div>
             </div>

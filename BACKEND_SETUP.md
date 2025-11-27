@@ -10,21 +10,20 @@
 ### API Endpoints
 
 #### Repository Endpoints (CSV Data)
-- `GET /api/repository/items` - Get all items with optional filters (type, country, year, search, tag)
+- `GET /api/repository/items` - Get all items with optional filters (type, country, year, search, sector)
 - `GET /api/repository/items/:id` - Get specific item by ID
 - `GET /api/repository/policies` - Get policies only
 - `GET /api/repository/reports` - Get reports only
 - `GET /api/repository/research` - Get research papers only
 - `GET /api/repository/countries` - Get list of available countries
-- `GET /api/repository/tags` - Get all available tags
+- `GET /api/repository/sectors` - Get all available sectors
 
 #### Policy Comparison & Analysis Endpoints
 - `GET /api/policies/compare?ids=1,2,3` - Compare multiple policies
 - `GET /api/policies/:country` - Get policies by country
 - `GET /api/policy-analysis` - Get all policy analysis data
 - `GET /api/policy-analysis/:country` - Get policy analysis for specific country
-- `GET /api/policy-analysis/compare?countries=Kenya,Tanzania` - Compare multiple countries
-- `GET /api/policy-analysis/ranking/:metric` - Get country rankings by metric
+- `GET /api/policy-analysis/ranking/:metric` - Get country rankings by metric (governance_score, mitigation_score, adaptation_score, overall_index)
 
 #### Climate Data Endpoints (API Proxy)
 - `GET /api/climate/:country/:metric?year=2023&month=12` - Get climate data (cached)

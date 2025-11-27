@@ -524,7 +524,7 @@ async function loadDroughtRisk(countries) {
           } else {
             riskLevel = 'High Risk';
             riskClass = 'high';
-            details = 'Significant rainfall deficit. Mitigation measures recommended.';
+            details = 'Significant rainfall deficit. Measures recommended.';
           }
           
           const card = document.createElement('div');

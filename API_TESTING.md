@@ -64,9 +64,9 @@ curl http://localhost:3000/api/repository/research
 curl http://localhost:3000/api/repository/countries
 ```
 
-#### Get available tags
+#### Get available sectors
 ```bash
-curl http://localhost:3000/api/repository/tags
+curl http://localhost:3000/api/repository/sectors
 ```
 
 ### Policy Comparison Endpoints

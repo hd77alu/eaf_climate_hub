@@ -4,12 +4,11 @@ A comprehensive web platform providing reliable climate insights across East Afr
 
 ## Features
 
-- **Data Visualization**: Interactive charts and graphs displaying temperature, rainfall, and drought data
 - **Regional Analysis**: Climate trends and patterns across the EAC region
-- **Policy-Climate Correlation**: Link climate data with relevant policy responses
+- **Data Visualization**: Interactive charts and graphs displaying temperature, rainfall, and drought data
 - **Policy Effectiveness Tracking**: Monitor policy performance against climate outcomes
 - **Regional Comparison Tools**: Analyze policy approaches between member states
-- **Interactive Regional Map**: Visual indicators of climate impacts and policy responses
+- **Interactive Regional Map**: Visual indicators of Regional climate response and climate policy performance
 - **Climate Data Repository**: Comprehensive database of policies, reports, and research papers
 
 ## Technology Stack
@@ -17,34 +16,46 @@ A comprehensive web platform providing reliable climate insights across East Afr
 - **Frontend**: HTML, CSS, Vanilla JavaScript
 - **Backend**: Node.js, Express.js
 - **Database**: PostgreSQL
-- **Visualization**: Chart.js
+- **Visualization**: Chart.js, Leaflet.js
 
 ## Project Structure
 
 ```
-eastafrica-climate-hub/
+eaf_climate_hub/
 ├── frontend/
 │   ├── pages/
 │   │   ├── index.html
 │   │   ├── climate-data-repository.html
-│   │   ├── policy-comparison-tracking.html
+│   │   ├── policy-analysis.html
 │   │   └── climate-map.html
 │   ├── css/
 │   │   └── style.css
 │   └── js/
 │       ├── functions.js
-│       ├── charts.js
 │       └── map.js
 ├── backend/
 │   ├── server.js
+│   ├── db.js
 │   ├── database-setup.js
 │   └── seed-data.js
 ├── data/
-│   └── csv/
-│       ├── repository-data.csv
-│       ├── policy-analysis.csv
-│       
+│   ├── csv/
+│   │   ├── repository-data.csv
+│   │   └── policy-analysis.csv
+│   └── geojason/
+│       ├── Burundi_ADM0_simplified.simplified.geojson
+│       ├── DR_Congo_ADM0_simplified.simplified.geojson
+│       ├── Kenya_ADM0_simplified.simplified.geojson
+│       ├── Rwanda_ADM0_simplified.simplified.geojson
+│       ├── Somalia_ADM0_simplified.simplified.geojson
+│       ├── South_Sudan_ADM0_simplified.simplified.geojson
+│       ├── Tanzania_ADM0_simplified.simplified.geojson
+│       └── Uganda_ADM0_simplified.simplified.geojson
+├── .gitignore
 ├── package.json
+├── package-lock.json
+├── API_TESTING.md
+├── BACKEND_SETUP.md
 └── README.md
 ```
 
@@ -98,7 +109,6 @@ eastafrica-climate-hub/
 6. **Access Application**
    - Frontend: `http://localhost:3000`
    - API: `http://localhost:3000/api`
-   - Health Check: `http://localhost:3000/api/health`
 
 For detailed backend setup and API documentation, see [BACKEND_SETUP.md](BACKEND_SETUP.md)
 

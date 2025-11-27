@@ -1,6 +1,6 @@
 # Backend Setup Guide
 
-## 🎯 What's Implemented
+## What's Implemented
 
 ### Database Schema
 - **repository_items**: Stores policies, reports, and research papers from CSV
@@ -37,7 +37,7 @@
 - `GET /api/stats/overview` - Get overall statistics
 - `GET /api/health` - Health check endpoint
 
-## 🚀 Setup Steps
+## Setup Steps
 
 ### 1. Install Dependencies
 ```bash
@@ -87,7 +87,7 @@ For development with auto-reload:
 npm run dev
 ```
 
-## 📝 CSV File Formats
+## CSV File Formats
 
 ### Repository Data CSV
 The `data/csv/repository-data.csv` file should have these columns:
@@ -119,7 +119,7 @@ country,governance_score,mitigation_score,adaptation_score,overall_index,source
 - **overall_index**: Overall index (0-100)
 - **source**: Source of the analysis data
 
-## 🔌 External API Integration
+## External API Integration
 
 The backend is ready to integrate external climate APIs. To add an API:
 
@@ -134,14 +134,14 @@ The backend is ready to integrate external climate APIs. To add an API:
 - **NASA POWER API**: https://power.larc.nasa.gov/docs/
 - **NOAA Climate Data**: https://www.ncdc.noaa.gov/cdo-web/webservices/v2
 
-## 🗺️ Map Integration
+## Map Integration
 
 For the climate map page, use:
 - **Leaflet.js**: `<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>`
 - Data from `/api/map/regions` endpoint
 - GeoJSON for EAC country boundaries
 
-## 🧪 Testing the API
+## Testing the API
 
 Test endpoints using curl or browser:
 
@@ -162,7 +162,7 @@ curl http://localhost:3000/api/map/regions
 curl http://localhost:3000/api/stats/overview
 ```
 
-## 📊 Next Steps
+## Next Steps
 
 1. **Add more CSV data** to `data/csv/repository-data.csv`
 2. **Integrate external climate API** in server.js
@@ -170,7 +170,7 @@ curl http://localhost:3000/api/stats/overview
 4. **Add map library** to `frontend/js/map.js`
 5. **Create charts** using Chart.js in `frontend/js/charts.js`
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Database Connection Error
 - Ensure PostgreSQL is running
@@ -186,7 +186,7 @@ curl http://localhost:3000/api/stats/overview
 - Ensure proper encoding (UTF-8)
 - Verify semicolon-separated tags
 
-## 📚 Additional Resources
+## Additional Resources
 
 - PostgreSQL Documentation: https://www.postgresql.org/docs/
 - Express.js Guide: https://expressjs.com/

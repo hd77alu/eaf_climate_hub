@@ -93,7 +93,7 @@ eaf_climate_hub/
    PORT=3000
    ```
    
-   Replace `your_password_here` with the password you set during PostgreSQL installation.
+   Replace `your_password_here` with your PostgreSQL password.
 
 3. **Setup Database Schema**
    ```bash

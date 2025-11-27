@@ -1895,4 +1895,17 @@ body {
   }
 }
 
+/* Footer */
+.site-footer {
+  text-align: center;
+  padding: 20px;
+  margin-top: 40px;
+  color: rgb(234, 170, 50);;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.site-footer p {
+  margin: 0;
+}
 

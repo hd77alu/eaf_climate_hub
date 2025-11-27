@@ -151,7 +151,7 @@ app.get('/api', (req, res) => {
     <body>
       <div class="container">
         <div class="header">
-          <h1>EAF Climate Hub API</h1>
+          <h1>East Africa Climate Hub API</h1>
           <p>Comprehensive climate insights across East African Community member states</p>
           <span class="version">v1.0.0</span>
         </div>

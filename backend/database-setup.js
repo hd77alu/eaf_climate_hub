@@ -1,7 +1,7 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-// First, connect to the default 'postgres' database to create our database
+// Connect to the default 'postgres' database to create our database
 const setupPool = new Pool({
   user: process.env.DB_USER || 'postgres',
   host: process.env.DB_HOST || 'localhost',

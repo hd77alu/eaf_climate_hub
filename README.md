@@ -2,7 +2,7 @@
 
 A comprehensive web platform providing reliable climate insights across East African Community member states for researchers, policy makers, and environmental leaders.
 
-**[Live Website](https://eaf-climate-hub.onrender.com/)**
+- **[Live Website](https://eaf-climate-hub.onrender.com/)**
 
 ## Features
 

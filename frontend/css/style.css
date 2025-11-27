@@ -8,6 +8,7 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #fcfbe4;
   color: #1f2937;
+  font-size: 14px;
 }
 
 .container {
@@ -1844,10 +1845,31 @@ body {
     width: calc(100% - 20px);
     left: 10px;
     right: 10px;
-    max-height: 350px;
+    max-height: 60vh;
     top: auto;
     bottom: 10px;
     transform: translateY(400px);
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+  }
+  
+  .map-info-panel::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .map-info-panel::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  .map-info-panel::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+  
+  .map-info-panel::-webkit-scrollbar-thumb:hover {
+    background: #555;
   }
   
   .map-info-panel.active {
@@ -1863,11 +1885,11 @@ body {
   }
   
   .info-panel-content {
-    padding: 1rem;
+    padding: 0.75rem;
   }
   
   .info-score-badge {
-    padding: 0.875rem 1.25rem;
+    padding: 0.75rem 1rem;
   }
   
   .info-score-value {

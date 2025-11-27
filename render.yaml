@@ -4,7 +4,7 @@ services:
     name: eaf-climate-hub-db
     env: docker
     plan: free
-    region: frankfurt
+    region: rwanda
     ipAllowList: []
     databases:
       - name: eaf_climate_hub

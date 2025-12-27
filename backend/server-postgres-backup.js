@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { query: dbQuery, dbReady } = require('./db');
+const { query } = require('./db');
 const path = require('path');
 require('dotenv').config();
 
@@ -294,7 +294,7 @@ app.get('/api', (req, res) => {
 // Health check endpoint
 app.get('/api/health', async (req, res) => {
   try {
-    await dbQuery('SELECT 1');
+    await pool.query('SELECT 1');
     res.json({ 
       status: 'healthy', 
       database: 'connected',
@@ -314,43 +314,43 @@ app.get('/api/repository/items', async (req, res) => {
   try {
     const { type, country, year, search, sector } = req.query;
     
-    let queryText = 'SELECT * FROM repository_items WHERE 1=1';
+    let query = 'SELECT * FROM repository_items WHERE 1=1';
     const params = [];
     let paramCount = 1;
 
     if (type) {
-      queryText += ` AND type = $${paramCount}`;
+      query += ` AND type = $${paramCount}`;
       params.push(type);
       paramCount++;
     }
 
     if (country) {
-      queryText += ` AND country = $${paramCount}`;
+      query += ` AND country = $${paramCount}`;
       params.push(country);
       paramCount++;
     }
 
     if (year) {
-      queryText += ` AND year = $${paramCount}`;
+      query += ` AND year = $${paramCount}`;
       params.push(parseInt(year));
       paramCount++;
     }
 
     if (search) {
-      queryText += ` AND (title LIKE $${paramCount} OR description LIKE $${paramCount})`;
+      query += ` AND (title ILIKE $${paramCount} OR description ILIKE $${paramCount})`;
       params.push(`%${search}%`);
       paramCount++;
     }
 
     if (sector) {
-      queryText += ` AND sector LIKE $${paramCount}`;
+      query += ` AND sector ILIKE $${paramCount}`;
       params.push(`%${sector}%`);
       paramCount++;
     }
 
-    queryText += ' ORDER BY year DESC, created_at DESC';
+    query += ' ORDER BY year DESC, created_at DESC';
 
-    const result = await dbQuery(queryText, params);
+    const result = await pool.query(query, params);
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching repository items:', error);
@@ -362,7 +362,7 @@ app.get('/api/repository/items', async (req, res) => {
 app.get('/api/repository/items/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await dbQuery(
+    const result = await pool.query(
       'SELECT * FROM repository_items WHERE id = $1',
       [id]
     );
@@ -382,17 +382,17 @@ app.get('/api/repository/items/:id', async (req, res) => {
 app.get('/api/repository/policies', async (req, res) => {
   try {
     const { country } = req.query;
-    let queryText = "SELECT * FROM repository_items WHERE type = 'policy'";
+    let query = "SELECT * FROM repository_items WHERE type = 'policy'";
     const params = [];
 
     if (country) {
-      queryText += ' AND country = $1';
+      query += ' AND country = $1';
       params.push(country);
     }
 
-    queryText += ' ORDER BY year DESC';
+    query += ' ORDER BY year DESC';
 
-    const result = await dbQuery(queryText, params);
+    const result = await pool.query(query, params);
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching policies:', error);
@@ -403,7 +403,7 @@ app.get('/api/repository/policies', async (req, res) => {
 // Get reports only
 app.get('/api/repository/reports', async (req, res) => {
   try {
-    const result = await dbQuery(
+    const result = await pool.query(
       "SELECT * FROM repository_items WHERE type = 'report' ORDER BY year DESC"
     );
     res.json(result.rows);
@@ -416,7 +416,7 @@ app.get('/api/repository/reports', async (req, res) => {
 // Get research papers only
 app.get('/api/repository/research', async (req, res) => {
   try {
-    const result = await dbQuery(
+    const result = await pool.query(
       "SELECT * FROM repository_items WHERE type = 'research' ORDER BY year DESC"
     );
     res.json(result.rows);
@@ -429,7 +429,7 @@ app.get('/api/repository/research', async (req, res) => {
 // Get available sectors
 app.get('/api/repository/sectors', async (req, res) => {
   try {
-    const result = await dbQuery(
+    const result = await pool.query(
       'SELECT DISTINCT TRIM(sector) as sector FROM repository_items WHERE sector IS NOT NULL ORDER BY sector'
     );
     res.json(result.rows.map(row => row.sector));
@@ -442,7 +442,7 @@ app.get('/api/repository/sectors', async (req, res) => {
 // Get available countries
 app.get('/api/repository/countries', async (req, res) => {
   try {
-    const result = await dbQuery(
+    const result = await pool.query(
       'SELECT DISTINCT TRIM(country) as country FROM repository_items WHERE country IS NOT NULL ORDER BY country'
     );
     res.json(result.rows.map(row => row.country));
@@ -462,15 +462,11 @@ app.get('/api/policies/compare', async (req, res) => {
     }
 
     const policyIds = ids.split(',').map(id => parseInt(id));
-    
-    // Build placeholders for SQLite IN clause
-    const placeholders = policyIds.map((_, i) => `$${i + 1}`).join(',');
-    
-    const result = await dbQuery(
+    const result = await pool.query(
       `SELECT * FROM repository_items 
-       WHERE id IN (${placeholders}) AND type = 'policy' 
+       WHERE id = ANY($1) AND type = 'policy' 
        ORDER BY year DESC`,
-      policyIds
+      [policyIds]
     );
 
     res.json(result.rows);
@@ -484,7 +480,7 @@ app.get('/api/policies/compare', async (req, res) => {
 app.get('/api/policies/:country', async (req, res) => {
   try {
     const { country } = req.params;
-    const result = await dbQuery(
+    const result = await pool.query(
       `SELECT * FROM repository_items 
        WHERE country = $1 AND type = 'policy' 
        ORDER BY year DESC`,
@@ -508,28 +504,28 @@ app.get('/api/climate/:country/:metric', async (req, res) => {
     const { year, month } = req.query;
 
     // Check cache first
-    let queryText = `
+    let query = `
       SELECT * FROM cached_climate_data 
       WHERE country = $1 AND metric = $2 
-      AND datetime(expires_at) > datetime('now')
+      AND expires_at > NOW()
     `;
     const params = [country, metric];
     let paramCount = 3;
 
     if (year) {
-      queryText += ` AND year = $${paramCount}`;
+      query += ` AND year = $${paramCount}`;
       params.push(parseInt(year));
       paramCount++;
     }
 
     if (month) {
-      queryText += ` AND month = $${paramCount}`;
+      query += ` AND month = $${paramCount}`;
       params.push(parseInt(month));
     }
 
-    queryText += ' ORDER BY year DESC, month DESC';
+    query += ' ORDER BY year DESC, month DESC';
 
-    const cached = await dbQuery(queryText, params);
+    const cached = await pool.query(query, params);
 
     if (cached.rows.length > 0) {
       return res.json({
@@ -555,7 +551,7 @@ app.get('/api/climate/:country/:metric', async (req, res) => {
 // Get all available climate metrics
 app.get('/api/climate/metrics', async (req, res) => {
   try {
-    const result = await dbQuery(
+    const result = await pool.query(
       'SELECT DISTINCT metric FROM cached_climate_data ORDER BY metric'
     );
     res.json(result.rows.map(row => row.metric));
@@ -574,25 +570,25 @@ app.get('/api/policy-analysis', async (req, res) => {
   try {
     const { country, source } = req.query;
     
-    let queryText = 'SELECT * FROM policy_analysis WHERE 1=1';
+    let query = 'SELECT * FROM policy_analysis WHERE 1=1';
     const params = [];
     let paramCount = 1;
 
     if (country) {
-      queryText += ` AND country = $${paramCount}`;
+      query += ` AND country = $${paramCount}`;
       params.push(country);
       paramCount++;
     }
 
     if (source) {
-      queryText += ` AND source LIKE $${paramCount}`;
+      query += ` AND source ILIKE $${paramCount}`;
       params.push(`%${source}%`);
       paramCount++;
     }
 
-    queryText += ' ORDER BY overall_index DESC, country ASC';
+    query += ' ORDER BY overall_index DESC, country ASC';
 
-    const result = await dbQuery(queryText, params);
+    const result = await pool.query(query, params);
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching policy analysis:', error);
@@ -604,7 +600,7 @@ app.get('/api/policy-analysis', async (req, res) => {
 app.get('/api/policy-analysis/:country', async (req, res) => {
   try {
     const { country } = req.params;
-    const result = await dbQuery(
+    const result = await pool.query(
       'SELECT * FROM policy_analysis WHERE country = $1 ORDER BY source DESC',
       [country]
     );
@@ -631,16 +627,13 @@ app.get('/api/policy-analysis/compare', async (req, res) => {
 
     const countryList = countries.split(',').map(c => c.trim());
     
-    // Build placeholders for SQLite IN clause
-    const placeholders = countryList.map((_, i) => `$${i + 1}`).join(',');
-    
-    const queryText = `
+    const query = `
       SELECT * FROM policy_analysis 
-      WHERE country IN (${placeholders})
+      WHERE country = ANY($1)
       ORDER BY overall_index DESC
     `;
 
-    const result = await dbQuery(queryText, countryList);
+    const result = await pool.query(query, [countryList]);
     res.json(result.rows);
   } catch (error) {
     console.error('Error comparing countries:', error);
@@ -658,14 +651,14 @@ app.get('/api/policy-analysis/ranking/:metric', async (req, res) => {
       return res.status(400).json({ error: 'Invalid metric. Use: governance_score, mitigation_score, adaptation_score, or overall_index' });
     }
 
-    const queryText = `
+    const query = `
       SELECT country, ${metric}, source
       FROM policy_analysis
       WHERE ${metric} IS NOT NULL
       ORDER BY ${metric} DESC
     `;
 
-    const result = await dbQuery(queryText);
+    const result = await pool.query(query);
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching ranking:', error);
@@ -680,13 +673,13 @@ app.get('/api/policy-analysis/ranking/:metric', async (req, res) => {
 // Get aggregated data for map visualization
 app.get('/api/map/regions', async (req, res) => {
   try {
-    const result = await dbQuery(`
+    const result = await pool.query(`
       SELECT 
         sector,
         COUNT(*) as total_items,
-        SUM(CASE WHEN type = 'policy' THEN 1 ELSE 0 END) as total_policies,
-        SUM(CASE WHEN type = 'report' THEN 1 ELSE 0 END) as total_reports,
-        SUM(CASE WHEN type = 'research' THEN 1 ELSE 0 END) as total_research
+        COUNT(*) FILTER (WHERE type = 'policy') as total_policies,
+        COUNT(*) FILTER (WHERE type = 'report') as total_reports,
+        COUNT(*) FILTER (WHERE type = 'research') as total_research
       FROM repository_items 
       WHERE sector IS NOT NULL
       GROUP BY sector
@@ -705,7 +698,7 @@ app.get('/api/map/climate-indicators/:country', async (req, res) => {
   try {
     const { country } = req.params;
     
-    const result = await dbQuery(`
+    const result = await pool.query(`
       SELECT metric, year, month, value
       FROM cached_climate_data
       WHERE country = $1
@@ -727,16 +720,16 @@ app.get('/api/map/climate-indicators/:country', async (req, res) => {
 // Get dashboard statistics
 app.get('/api/stats/overview', async (req, res) => {
   try {
-    const stats = await dbQuery(`
+    const stats = await pool.query(`
       SELECT 
-        SUM(CASE WHEN type = 'policy' THEN 1 ELSE 0 END) as total_policies,
-        SUM(CASE WHEN type = 'report' THEN 1 ELSE 0 END) as total_reports,
-        SUM(CASE WHEN type = 'research' THEN 1 ELSE 0 END) as total_research,
+        COUNT(*) FILTER (WHERE type = 'policy') as total_policies,
+        COUNT(*) FILTER (WHERE type = 'report') as total_reports,
+        COUNT(*) FILTER (WHERE type = 'research') as total_research,
         COUNT(DISTINCT country) as total_countries
       FROM repository_items
     `);
 
-    const analysisStats = await dbQuery(`
+    const analysisStats = await pool.query(`
       SELECT 
         COUNT(DISTINCT country) as countries_analyzed,
         AVG(overall_index) as avg_overall_index,
@@ -759,25 +752,16 @@ app.get('/api/stats/overview', async (req, res) => {
 // START SERVER
 // =====================================================
 
-const startServer = async () => {
-  try {
-    await dbReady;
-    console.log('EastAfrica Climate Hub Server');
-    console.log(`Server running on http://localhost:${PORT}`);
-    console.log(`API endpoints available at http://localhost:${PORT}/api`);
-    console.log(`Database: SQLite (data/eaf_climate_hub.db)`);
-    console.log('Press Ctrl+C to stop the server');
-    app.listen(PORT);
-  } catch (err) {
-    console.error('Failed to start server:', err);
-    process.exit(1);
-  }
-};
-
-startServer();
+app.listen(PORT, () => {
+  console.log('EastAfrica Climate Hub Server');
+  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`API endpoints available at http://localhost:${PORT}/api`);
+  console.log('Press Ctrl+C to stop the server');
+});
 
 // Graceful shutdown
-process.on('SIGINT', () => {
-  console.log('\nShutting down gracefully...');
+process.on('SIGINT', async () => {
+  console.log('\nShutting down...');
+  await pool.end();
   process.exit(0);
 });

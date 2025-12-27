@@ -2,6 +2,8 @@
 
 A comprehensive web platform providing reliable climate insights across East African Community member states for researchers, policy makers, and environmental leaders.
 
+- **[Live Website](https://eaf-climate-hub.onrender.com/)**
+
 ## Features
 
 - **Regional Analysis**: Climate trends and patterns across the EAC region
@@ -15,7 +17,7 @@ A comprehensive web platform providing reliable climate insights across East Afr
 
 - **Frontend**: HTML, CSS, Vanilla JavaScript
 - **Backend**: Node.js, Express.js
-- **Database**: PostgreSQL
+- **Database**: SQLite3
 - **Visualization**: Chart.js, Leaflet.js
 
 ## Project Structure
@@ -63,9 +65,6 @@ eaf_climate_hub/
 
 ### Prerequisites
 - **Node.js** (v14 or higher)
-- **PostgreSQL** (v12 or higher) - [Download here](https://www.postgresql.org/download/)
-
-> **Note:** Make sure PostgreSQL is installed and running on your machine before proceeding.
 
 ### Installation
 
@@ -74,45 +73,23 @@ eaf_climate_hub/
    npm install
    ```
 
-2. **Configure Environment**
-   
-   Create a `.env` file in the root directory:
-   
-   ```bash
-   touch .env
-   ```
-   
-   Then add the following configuration to the `.env` file:
-   
-   ```env
-   DB_USER=postgres
-   DB_HOST=localhost
-   DB_NAME=eaf_climate_hub
-   DB_PASSWORD=your_password_here
-   DB_PORT=5432
-   PORT=3000
-   ```
-   
-   Replace `your_password_here` with your PostgreSQL password.
-
-3. **Setup Database Schema**
+2. **Setup Database Schema**
    ```bash
    npm run setup-db
    ```
-   This will automatically create the database and all required tables.
+   This will automatically create the SQLite database file (`data/eaf_climate_hub.db`) and all required tables.
 
-4. **Seed Data**
+3. **Seed Data**
    ```bash
    npm run seed
    ```
 
-5. **Start Server**
+4. **Start Server**
    ```bash
    npm start
    ```
-   
 
-6. **Access Application**
+5. **Access Application**
    - Frontend: `http://localhost:3000`
    - API: `http://localhost:3000/api`
 

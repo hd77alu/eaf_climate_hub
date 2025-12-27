@@ -1,44 +1,34 @@
-const { Pool } = require('pg');
+const sqlite3 = require('sqlite3').verbose();
 const fs = require('fs');
 const csv = require('csv-parser');
 const path = require('path');
 require('dotenv').config();
 
-// Use DATABASE_URL if available (Render), otherwise use individual variables (local)
-const pool = new Pool(
-  process.env.DATABASE_URL
-    ? {
-        connectionString: process.env.DATABASE_URL,
-        ssl: {
-          rejectUnauthorized: false
-        }
-      }
-    : {
-        user: process.env.DB_USER || 'postgres',
-        host: process.env.DB_HOST || 'localhost',
-        database: process.env.DB_NAME || 'eaf_climate_hub',
-        password: process.env.DB_PASSWORD || 'postgres',
-        port: process.env.DB_PORT || 5432,
-      }
-);
+const dbPath = path.join(__dirname, '../data/eaf_climate_hub.db');
+const db = new sqlite3.Database(dbPath);
+
+// Promisify db.run
+const runAsync = (sql, params = []) => {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function(err) {
+      if (err) reject(err);
+      else resolve({ lastID: this.lastID, changes: this.changes });
+    });
+  });
+};
 
 async function seedData() {
-  const client = await pool.connect();
-  
   try {
     console.log('Starting data seeding...');
 
     // Clear existing data
     console.log('Clearing existing data...');
-    await client.query('DELETE FROM policy_analysis');
-    await client.query('DELETE FROM cached_climate_data');
-    await client.query('DELETE FROM repository_items');
+    await runAsync('DELETE FROM policy_analysis');
+    await runAsync('DELETE FROM cached_climate_data');
+    await runAsync('DELETE FROM repository_items');
     
-    // Reset sequences to start from 1
-    await client.query('ALTER SEQUENCE repository_items_id_seq RESTART WITH 1');
-    await client.query('ALTER SEQUENCE policy_analysis_id_seq RESTART WITH 1');
-    await client.query('ALTER SEQUENCE cached_climate_data_id_seq RESTART WITH 1');
-    console.log('Existing data cleared and sequences reset');
+    // Reset sequences (SQLite handles autoincrement automatically)
+    console.log('Existing data cleared');
 
     // Load repository data from CSV
     const csvPath = path.join(__dirname, '../data/csv/repository-data.csv');
@@ -48,10 +38,10 @@ async function seedData() {
     }
     
     console.log('Reading CSV file...');
-    await loadFromCSV(client, csvPath);
+    await loadFromCSV(csvPath);
 
     // Add policy analysis data
-    await addPolicyAnalysisData(client);
+    await addPolicyAnalysisData();
 
     console.log('Data seeding completed successfully!');
 
@@ -59,12 +49,11 @@ async function seedData() {
     console.error('Error seeding data:', error);
     throw error;
   } finally {
-    client.release();
-    await pool.end();
+    db.close();
   }
 }
 
-async function loadFromCSV(client, csvPath) {
+async function loadFromCSV(csvPath) {
   return new Promise((resolve, reject) => {
     const results = [];
     
@@ -76,10 +65,10 @@ async function loadFromCSV(client, csvPath) {
         
         for (const row of results) {
           try {
-            await client.query(`
+            await runAsync(`
               INSERT INTO repository_items 
               (title, type, country, year, description, source, link, sector)
-              VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `, [
               row.title,
               row.type,
@@ -102,7 +91,7 @@ async function loadFromCSV(client, csvPath) {
   });
 }
 
-async function addPolicyAnalysisData(client) {
+async function addPolicyAnalysisData() {
   const csvPath = path.join(__dirname, '../data/csv/policy-analysis.csv');
   
   if (!fs.existsSync(csvPath)) {
@@ -121,10 +110,10 @@ async function addPolicyAnalysisData(client) {
         
         for (const row of results) {
           try {
-            await client.query(`
+            await runAsync(`
               INSERT INTO policy_analysis 
               (country, governance_score, mitigation_score, adaptation_score, overall_index, source)
-              VALUES ($1, $2, $3, $4, $5, $6)
+              VALUES (?, ?, ?, ?, ?, ?)
             `, [
               row.country,
               parseFloat(row.governance_score) || null,
